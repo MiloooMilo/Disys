@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/DisysProjekt/CollectionReceiver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/CollectionReceiver/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/DataCollectionDispatcher/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/DataCollectionDispatcher/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/JavaFX/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/JavaFX/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/PDFGenerator/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/PDFGenerator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/SpringBootApp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/SpringBootApp/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/StationDataCollector/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/StationDataCollector/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/out/production/Projekt/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/DisysProjekt/out/production/Projekt/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
