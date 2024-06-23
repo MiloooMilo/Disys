@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <Label layoutX="20.0" layoutY="30.0" text="Customer ID:" />
+    <TextField fx:id="customerIdField" layoutX="130.0" layoutY="30.0" prefWidth="200.0" />
+    <Button fx:id="generateInvoice" mnemonicParsing="false" layoutX="150.0" layoutY="80.0" text="Generate Invoice" />
+    <Button fx:id="downloadPdfButton" mnemonicParsing="false" text="Download PDF" visible="false" layoutX="150.0" layoutY="120.0" />
+    <Label fx:id="statusLabel" layoutX="20.0" layoutY="170.0" />
+  </children>
+</AnchorPane>
