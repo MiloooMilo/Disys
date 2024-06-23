@@ -40,7 +40,7 @@ public class MainApp extends Application {
     private Timer timer;
     private String currentCustomerId = "";
 
-    private static final String PDF_DIRECTORY = "../PDF_Files/";
+    private static final String PDF_DIRECTORY = "../ProjektCharging/PDF_Files/";
 
     @Override
     public void start(Stage primaryStage) throws Exception {

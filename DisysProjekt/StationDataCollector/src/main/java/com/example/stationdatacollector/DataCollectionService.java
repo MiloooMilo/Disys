@@ -1,7 +1,7 @@
 package com.example.stationdatacollector;
 
 
-import org.example.service.Service;
+
 
 import java.sql.*;
 import java.util.ArrayList;

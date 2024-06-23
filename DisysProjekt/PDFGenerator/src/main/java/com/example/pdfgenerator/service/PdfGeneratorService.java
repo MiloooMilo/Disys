@@ -24,7 +24,7 @@ public class PdfGeneratorService {
     }
 
     private Document createDocument(Customer customer) throws FileNotFoundException, DocumentException {
-        String directoryPath = "../PDF_Files/";
+        String directoryPath = "../ProjektCharging/PDF_Files/";
         String filePath = directoryPath + "Invoice_" + customer.getCustomerId() + ".pdf";
 
         java.io.File directory = new java.io.File(directoryPath);
