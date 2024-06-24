@@ -14,16 +14,16 @@ public class Producer {
 
         try (
                 Connection connection = factory.newConnection();
-                Channel channel = connection.createChannel();
+                Channel channel = connection.createChannel()
         ) {
             System.out.println("Connection and Channel created successfully.");
             channel.exchangeDeclare("kwh", "direct");
             channel.queueDeclare(queueName, false, false, false, null);
             channel.queueBind(queueName, "kwh", queueName);
             channel.basicPublish("kwh", queueName, null, customerId.getBytes());
-            System.out.println(" [x] Sent '" + customerId + "' to queue: " + queueName);
+            System.out.println("Sent " + customerId + " to queue: " + queueName);
         } catch (Exception e) {
-            System.out.println(" [x] Unexpected exception at Producer: " + e.getMessage());
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }

@@ -6,7 +6,6 @@ import com.example.collectionreceiver.model.Charge;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Controller {
@@ -20,21 +19,14 @@ public class Controller {
     }
 
     public static void sendDataForInvoice(String customerID, String msg){
-        if(msg.toLowerCase().equals("start")) {
+        if(msg.equalsIgnoreCase("start")) {
             Producer.send("start", customerID, "PDFGENERATOR", broker);
-            System.out.println("Yarak0" + customerID);
-        } else if (msg.toLowerCase().equals("end")) {
+        } else if (msg.equalsIgnoreCase("end")) {
             send(customerID);
-            System.out.println("Yarak1" + customerID);
         } else {
             Charge charge = new Charge(msg, customerID);
             charges.add(charge);
-            System.out.println("Yarak2" + customerID);
         }
-    }
-
-    public static List<Charge> getCharges(){
-        return charges;
     }
 
     private static void send(String customerID){
@@ -44,10 +36,10 @@ public class Controller {
                 chargesForSpecificCustomerID.add(charge);
         }
 
-        for (int i = 0; i < chargesForSpecificCustomerID.size(); i++) {
-            Charge charge = chargesForSpecificCustomerID.get(i);
+        for (Charge charge : chargesForSpecificCustomerID) {
             Producer.send(charge.getKwh(), customerID, "PDFGENERATOR", broker);
         }
+
 
         // After sending all charges, send the "end" message
         Producer.send("end", customerID, "PDFGENERATOR", broker);

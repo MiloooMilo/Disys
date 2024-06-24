@@ -16,12 +16,6 @@ public class StationDataCollectorController {
         this.sender = new Sender();
     }
 
-    // Neuer Konstruktor für Tests
-    public StationDataCollectorController(DataCollectionService dataCollectionService, Sender sender) {
-        this.dataCollectionService = dataCollectionService;
-        this.sender = sender;
-    }
-
     public void run(String queueName, String brokerUrl) throws IOException, TimeoutException {
         this.broker = brokerUrl;
         Collector.listenForMessages(queueName, brokerUrl, this);

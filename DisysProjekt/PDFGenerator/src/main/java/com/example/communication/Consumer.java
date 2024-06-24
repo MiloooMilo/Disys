@@ -6,7 +6,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.TimeoutException;
@@ -22,11 +22,11 @@ public class Consumer {
         channel.exchangeDeclare("kwh", "direct");
         channel.queueDeclare(queueName, false, false, false, null);
 
-        System.out.println(" [x] Dispatcher listening to  '" + queueName + "'");
+        System.out.println("Dispatcher listening to  " + queueName);
         channel.queueBind(queueName, "kwh", queueName);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
+            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             String[] msg = message.split(";");
             System.out.println("Received: " + msg[0] + " " + msg[1]);
             try {

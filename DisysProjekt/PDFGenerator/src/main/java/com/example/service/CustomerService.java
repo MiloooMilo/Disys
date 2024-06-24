@@ -11,13 +11,12 @@ public class CustomerService {
     }
 
 
-    public static Customer getCustomerData(String customerId, String dburl) throws SQLException {
+    public static Customer getCustomerData(String customerId, String dburl) {
         Customer customer = null;
         try ( Connection conn = connect(dburl) ) {
-            System.out.println("alles ok");
-            String query = "SELECT id, first_name, last_name FROM customer WHERE id = " + customerId +";";
-            ResultSet resultSet = getResultSet(conn, query);
-            customer = convertResultSet(resultSet);
+            String sql = "SELECT id, first_name, last_name FROM customer WHERE id = " + customerId +";";
+            ResultSet data = getResultSet(conn, sql);
+            customer = convertResultSet(data);
         }catch (SQLException e) {
             e.printStackTrace();
         }

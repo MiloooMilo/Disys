@@ -46,7 +46,7 @@ public class MainApp extends Application {
     private Timer timer;
     private String currentCustomerId = "";
 
-    private static final String PDF_DIRECTORY = "../ProjektCharging/PDF_Files/";
+    private static final String PDF_DIRECTORY = "../DisysProjektAbgabe/PDF_Files/";
     private List<String> customerIds = new ArrayList<>();
 
     @Override
