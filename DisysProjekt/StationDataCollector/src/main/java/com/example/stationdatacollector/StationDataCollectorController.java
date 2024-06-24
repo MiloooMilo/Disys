@@ -8,10 +8,18 @@ import java.util.concurrent.TimeoutException;
 public class StationDataCollectorController {
 
     private final DataCollectionService dataCollectionService;
+    private final Sender sender;
     private String broker;
 
     public StationDataCollectorController() {
         this.dataCollectionService = new DataCollectionService();
+        this.sender = new Sender();
+    }
+
+    // Neuer Konstruktor für Tests
+    public StationDataCollectorController(DataCollectionService dataCollectionService, Sender sender) {
+        this.dataCollectionService = dataCollectionService;
+        this.sender = sender;
     }
 
     public void run(String queueName, String brokerUrl) throws IOException, TimeoutException {
@@ -29,7 +37,7 @@ public class StationDataCollectorController {
             // Check if the message is "end"
             if (stationDbUrl.equals("end")) {
                 // Send "end" message to the RECEIVER queue
-                Sender.sendMessage("end", customerId, "RECEIVER", broker);
+                sender.sendMessage("end", customerId, "RECEIVER", broker);
                 return;
             }
 
@@ -45,7 +53,7 @@ public class StationDataCollectorController {
 
             // Send the collected data to the RECEIVER queue
             String dataMessage = String.join(",", chargingData);
-            Sender.sendMessage(dataMessage, customerId, "RECEIVER", broker);
+            sender.sendMessage(dataMessage, customerId, "RECEIVER", broker);
 
         } catch (SQLException e) {
             e.printStackTrace();

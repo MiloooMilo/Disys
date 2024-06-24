@@ -7,28 +7,25 @@ import java.util.ArrayList;
 public class Service {
 
     private static Connection connect() throws SQLException {
-        String connectionString="jdbc:postgresql://localhost:30002/stationdb";
-        return DriverManager.getConnection(connectionString, "postgres", "postgres");
+        String connection="jdbc:postgresql://localhost:30002/stationdb";
+        return DriverManager.getConnection(connection, "postgres", "postgres");
     }
 
     public static ArrayList<Station> getStations() throws SQLException {
         ArrayList<Station> stations = new ArrayList<>();
 
         try ( Connection conn = connect() ) {
-            String query = "SELECT id, db_url, lat, lng FROM station;";
-            ResultSet resultSet = getResultSet(conn, query);
-            stations = convertResultSet(resultSet);
+            String sql = "SELECT id, db_url, lat, lng FROM station;";
+            ResultSet resultSet = getResults(conn, sql);
+            stations = convertResults(resultSet);
         }
 
         return stations;
     }
 
-    private static ResultSet getResultSet(Connection conn, String query) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement(query);
-        return stmt.executeQuery();
-    }
 
-    private static ArrayList<Station> convertResultSet(ResultSet rs) throws SQLException {
+
+    private static ArrayList<Station> convertResults(ResultSet rs) throws SQLException {
         ArrayList<Station> stations = new ArrayList<>();
         while (rs.next()) {
             Station station = new Station(
@@ -41,4 +38,9 @@ public class Service {
         }
         return stations;
     }
+    private static ResultSet getResults(Connection conn, String query) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement(query);
+        return stmt.executeQuery();
+    }
 }
+

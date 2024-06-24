@@ -16,7 +16,7 @@ public class Collector {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(brokerAddress);
         factory.setPort(30003);
-
+//https://www.rabbitmq.com/tutorials/tutorial-two-java
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 

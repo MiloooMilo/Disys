@@ -12,7 +12,7 @@ public class Sender {
         msg = customerID + ";" + msg;
 
         try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+             Channel channel = connection.createChannel()) {  //https://www.rabbitmq.com/tutorials/tutorial-one-java
             channel.exchangeDeclare("sendID", "direct");
             channel.queueDeclare(queueName, false, false, false, null);
             channel.queueBind(queueName, "sendID", queueName);

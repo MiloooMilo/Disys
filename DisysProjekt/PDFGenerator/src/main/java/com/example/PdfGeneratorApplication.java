@@ -1,8 +1,6 @@
-package com.example.pdfgenerator;
+package com.example;
 
-import com.example.pdfgenerator.controller.PDFController;
-import com.example.pdfgenerator.controller.PDFController;
-import org.springframework.boot.SpringApplication;
+import com.example.controller.PDFController;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;

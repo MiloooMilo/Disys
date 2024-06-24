@@ -10,7 +10,7 @@ public class Sender {
         factory.setHost(brokerUrl);
         factory.setPort(30003);
         msg = customerID + ";" + msg;
-
+        //https://www.rabbitmq.com/tutorials/tutorial-one-java
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.exchangeDeclare("sendID", "direct");

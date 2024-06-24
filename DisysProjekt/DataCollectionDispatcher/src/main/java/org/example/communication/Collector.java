@@ -17,7 +17,7 @@ public class Collector {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(brokerAddress);
         factory.setPort(30003);
-
+//https://www.rabbitmq.com/tutorials/tutorial-one-java
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
@@ -27,7 +27,7 @@ public class Collector {
         System.out.println(" [x] Listening on queue '" + queueName + "' at broker '" + brokerAddress + "'");
 
         channel.queueBind(queueName, "sendID", queueName);
-
+//https://www.rabbitmq.com/tutorials/tutorial-two-java
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
             System.out.println(" [x] Received message: " + message);

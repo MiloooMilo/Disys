@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -19,6 +20,8 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,41 +39,50 @@ public class MainApp extends Application {
     @FXML
     private Button downloadPdfButton;
 
+    @FXML
+    private ListView<String> customerIdListView;
+
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private Timer timer;
     private String currentCustomerId = "";
 
     private static final String PDF_DIRECTORY = "../ProjektCharging/PDF_Files/";
+    private List<String> customerIds = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Load the FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/javafx/Customer.fxml"));
         loader.setController(this); // Set this class as the controller
         Parent root = loader.load();
 
         // Set up the primary stage
         primaryStage.setTitle("Invoice Generator");
-        primaryStage.setScene(new Scene(root, 400, 200));
+        primaryStage.setScene(new Scene(root, 400, 300));
         primaryStage.show();
 
+        // Ensure the downloadPdfButton is always visible
+        downloadPdfButton.setVisible(true);
+
         // Set the button action for generateInvoice
-        generateInvoice.setOnAction(event -> {
-            String customerId = customerIdField.getText().trim();
-            if (!customerId.isEmpty() && !customerId.equals(currentCustomerId)) {
-                currentCustomerId = customerId;
-                stopStatusCheck();
-                sendPostRequest(customerId);
-            } else {
-                statusLabel.setText("Please enter a different customer ID.");
-            }
-        });
+        generateInvoice.setOnAction(event -> handleGenerateInvoice());
 
         // Set the button action for downloadPdfButton
-        downloadPdfButton.setOnAction(event -> {
-            String pdfFilePath = PDF_DIRECTORY + "Invoice_" + currentCustomerId + ".pdf";
-            downloadPDF(pdfFilePath);
-        });
+        downloadPdfButton.setOnAction(event -> handleDownloadPdf());
+
+        // Add listener to customerIdField to check for existing invoice when Enter is pressed
+        customerIdField.setOnAction(event -> checkExistingInvoice(customerIdField.getText().trim()));
+    }
+
+    private void handleGenerateInvoice() {
+        String customerId = customerIdField.getText().trim();
+        if (!customerId.isEmpty() && !customerId.equals(currentCustomerId)) {
+            currentCustomerId = customerId;
+            stopStatusCheck();
+            sendPostRequest(customerId);
+            addCustomerIdToList(customerId);
+        } else {
+            statusLabel.setText("Please enter a different customer ID.");
+        }
     }
 
     private void sendPostRequest(String customerId) {
@@ -124,16 +136,10 @@ public class MainApp extends Application {
                                 String invoicePath = response.body();
                                 Platform.runLater(() -> System.out.println("GET Response: " + response.body()));
                                 if (!invoicePath.startsWith("PDF file not found")) {
-                                    Platform.runLater(() -> {
-                                        statusLabel.setText("Invoice is ready for Customer ID: " + customerId);
-                                        downloadPdfButton.setVisible(true); // Show button when PDF exists
-                                    });
+                                    Platform.runLater(() -> statusLabel.setText("Invoice is ready for Customer ID: " + customerId));
                                     stopStatusCheck();
                                 } else {
-                                    Platform.runLater(() -> {
-                                        statusLabel.setText("PDF not yet created for ID: " + customerId);
-                                        downloadPdfButton.setVisible(false); // Hide button when PDF does not exist
-                                    });
+                                    Platform.runLater(() -> statusLabel.setText("PDF not yet created for ID: " + customerId));
                                 }
                             }).exceptionally(e -> {
                                 Platform.runLater(() -> statusLabel.setText("Error: " + e.getMessage()));
@@ -146,6 +152,11 @@ public class MainApp extends Application {
                 }
             }
         }, 0, 5000); // Check every 5 seconds
+    }
+
+    private void handleDownloadPdf() {
+        String pdfFilePath = PDF_DIRECTORY + "Invoice_" + currentCustomerId + ".pdf";
+        downloadPDF(pdfFilePath);
     }
 
     private void downloadPDF(String localFilePath) {
@@ -167,6 +178,47 @@ public class MainApp extends Application {
     private void stopStatusCheck() {
         if (timer != null) {
             timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void addCustomerIdToList(String customerId) {
+        if (!customerIds.contains(customerId)) {
+            customerIds.add(customerId);
+            Platform.runLater(() -> customerIdListView.getItems().add(customerId));
+        }
+    }
+
+    private void checkExistingInvoice(String customerId) {
+        if (customerId.isEmpty()) return;
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI("http://localhost:8080/invoices/" + customerId))
+                    .GET()
+                    .build();
+
+            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            String invoicePath = response.body();
+                            System.out.println("GET Response: " + response.body());
+                            if (!invoicePath.startsWith("PDF file not found")) {
+                                statusLabel.setText("Invoice is ready for Customer ID: " + customerId);
+                                currentCustomerId = customerId;
+                            } else {
+                                statusLabel.setText("No existing PDF for ID: " + customerId);
+                                currentCustomerId = "";
+                            }
+                        });
+                    }).exceptionally(e -> {
+                        Platform.runLater(() -> statusLabel.setText("Error: " + e.getMessage()));
+                        e.printStackTrace();
+                        return null;
+                    });
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            Platform.runLater(() -> statusLabel.setText("Invalid URI: " + e.getMessage()));
         }
     }
 
