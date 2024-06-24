@@ -17,24 +17,36 @@ public class Consumer {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(brokerUrl);
         factory.setPort(30003);
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-        channel.exchangeDeclare("kwh", "direct");
-        channel.queueDeclare(queueName, false, false, false, null);
 
-        System.out.println("Dispatcher listening to  " + queueName);
-        channel.queueBind(queueName, "kwh", queueName);
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            String[] msg = message.split(";");
-            System.out.println("Received: " + msg[0] + " " + msg[1]);
-            try {
-                PDFController.generatePdf(msg[0], msg[1]);
-            } catch (TimeoutException | SQLException | DocumentException e) {
-                e.printStackTrace();
+            channel.exchangeDeclare("kwh", "direct");
+            channel.queueDeclare(queueName, false, false, false, null);
+
+            System.out.println("Dispatcher listening to " + queueName);
+            channel.queueBind(queueName, "kwh", queueName);
+
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                String[] msg = message.split(";");
+                System.out.println("Received: " + msg[0] + " " + msg[1]);
+                try {
+                    PDFController.generatePdf(msg[0], msg[1]);
+                } catch (TimeoutException | SQLException | DocumentException e) {
+                    e.printStackTrace();
+                }
+            };
+
+            channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
+
+            // Prevent the try-with-resources from closing the resources immediately
+            synchronized (connection) {
+                connection.wait();
             }
-        };
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Thread interrupted", e);
+        }
     }
 }

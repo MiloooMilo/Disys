@@ -13,27 +13,33 @@ import java.util.concurrent.TimeoutException;
 public class Consumer {
 
     public static void receive(String queueName, String brokerUrl) throws IOException, TimeoutException {
-
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(brokerUrl);
         factory.setPort(30003);
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-        channel.exchangeDeclare("kwh", "direct");
-        channel.queueDeclare(queueName, false, false, false, null);
 
-        System.out.println("Dispatcher listening to  '" + queueName + "'");
-        channel.queueBind(queueName, "kwh", queueName);
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.exchangeDeclare("kwh", "direct");
+            channel.queueDeclare(queueName, false, false, false, null);
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println("Received: " + message );
-            String[] msg = message.split(";");
-            Controller.sendDataForInvoice(msg[0], msg[1]);
+            System.out.println("Dispatcher listening to  '" + queueName + "'");
+            channel.queueBind(queueName, "kwh", queueName);
 
-        };
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                System.out.println("Received: " + message);
+                String[] msg = message.split(";");
+                Controller.sendDataForInvoice(msg[0], msg[1]);
+            };
+            channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
 
-
+            // Prevent the try-with-resources from closing the resources immediately
+            synchronized (connection) {
+                connection.wait();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Thread interrupted", e);
+        }
     }
 }
