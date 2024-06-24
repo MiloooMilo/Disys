@@ -1,6 +1,6 @@
 package org.example.communication;
 
-
+import java.nio.charset.StandardCharsets;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -24,13 +24,13 @@ public class Collector {
         channel.exchangeDeclare("sendID", "direct");
         channel.queueDeclare(queueName, false, false, false, null);
 
-        System.out.println(" [x] Listening on queue '" + queueName + "' at broker '" + brokerAddress + "'");
+        System.out.println("Listening to '" + queueName + "' at broker '" + brokerAddress + "'");
 
         channel.queueBind(queueName, "sendID", queueName);
 //https://www.rabbitmq.com/tutorials/tutorial-two-java
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println(" [x] Received message: " + message);
+            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+            System.out.println("Received message: " + message);
 
             try {
                 dispatcher.startDispatching(message);
@@ -40,7 +40,7 @@ public class Collector {
         };
 
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {});
-        System.out.println(" [x] Consumer started and waiting for messages...");
+        System.out.println("Consumer started and waiting for messages...");
     }
 }
 

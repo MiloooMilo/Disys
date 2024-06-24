@@ -17,9 +17,9 @@ public class Sender {
             channel.queueDeclare(queueName, false, false, false, null);
             channel.queueBind(queueName, "sendID", queueName);
             channel.basicPublish("sendID", queueName, null, msg.getBytes());
-            System.out.println(" [x] Sent '" + msg + "' to queue: " + queueName);
+            System.out.println("Sent '" + msg + "' to queue: " + queueName);
         } catch (Exception e) {
-            System.out.println(" [x] Unexpected exception at Sender: " + e.getMessage());
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
