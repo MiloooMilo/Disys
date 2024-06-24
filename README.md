@@ -16,12 +16,19 @@ Receives and aggregates data from multiple “StationDataCollector” instances.
 PDFGenerator:
 Generates a PDF invoice from the aggregated data and saves it into “PDF_Files”.
 JavaFX (GUI)/user-guide:
-JavaFX enables regular consumers to use the application by clicking on Generate invoice, beforehand they must enter the consumer ID (1-3). During this process, the application starts working and generates an invoice. After a few seconds a second button appears which says “Download PDF” which enables the user to download the invoice. All the generated files will be saved in the “PDF_Files” file and are accessible at any point in time. 
+JavaFX enables regular consumers to use the application by clicking on Generate invoice, beforehand they must enter the consumer ID (1-3), they are able to check the state of the file by pressing enter. During this process, the application starts working and generates an invoice. “Download PDF” enables the user to download the invoice. All the generated files will be saved in the “PDF_Files” file and are accessible at any point in time. Besides that the user is able to see the history of searched IDS.
 UML-Diagram:
 
+![image](https://github.com/MiloooMilo/Disys/assets/131277273/364ee6ce-fe08-4d8c-bd48-13a3112f5a88)
+ 
 Learned Lessons:
 We learned that due to the MicroService structure you often have to be aware of how the services really communicate and how to ensure their functionality without writing lines of unnecessary code.
 The biggest thing we learned from this project is time management and workload-management, due to us starting very late and putting a lot of pressure on ourselves as a consequence of this.
+
+Unit testing decisions
+By including these tests, we wanted to ensure that our application is both correctly configured and functionally sound, but also providing a robust foundation for further development and deployment.
+StationDataCollector: The “contextLoads” test ensures that the Spring application context loads correctly, indicating that the application's configuration is valid. “testProcessStationData” test verifies that the “processStationData” method in the “StationDataCollectorController” processes data correctly. It uses a mocked “DataCollectionService” to simulate the response and ensures that the controller's method is called with the expected message. The “testRun” test ensures that the run method in the “StationDataCollectorController” starts the process of listening for messages correctly. It verifies that the method is called with the expected arguments.
+PDFGenerator: The purpose of this test is to verify that the main method of “PdfGeneratorApplication” runs without throwing any exceptions. This includes ensuring that the Spring Boot application context starts up correctly. Confirming that there are no misconfigurations or issues that prevent the application from starting.
 Tracked time: 63 hours of work
 GitLink: https://github.com/MiloooMilo/Disys.git
 		
